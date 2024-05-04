@@ -15,20 +15,14 @@ if ($_POST) {
     $shipping_district = mysqli_real_escape_string($con, $_POST['shipping_district']);
     $shipping_zipcode = mysqli_real_escape_string($con, $_POST['shipping_zipcode']);
     $user_id = $_SESSION['user']['user_id'];
-
     $ordermasterq = mysqli_query($con, "INSERT INTO order_master(order_date, user_id, order_status, shipping_name, shipping_mobile,shipping_address1,shipping_address2,shipping_email,shipping_country,shipping_city,shipping_district,shipping_zipcode) 
     VALUES (CURRENT_TIMESTAMP(),'{$user_id}','pending','{$shipping_name}','{$shipping_mobile}','{$shipping_address1}','{$shipping_address2}','{$shipping_email}','{$shipping_country}','{$shipping_city}','{$shipping_district}','{$shipping_zipcode}')") or die(mysqli_error($con));
-
     $order_id = mysqli_insert_id($con);
-
-    $cart_q = mysqli_query($con, "SELECT product_master.pro_price,cart.* FROM product_master INNER JOIN cart ON product_master.pro_id = cart.pro_id WHERE user_id = '$user_id'");
-
-    
+    $cart_q = mysqli_query($con, "SELECT product_master.pro_price,cart.* FROM product_master INNER JOIN cart ON product_master.pro_id = cart.pro_id WHERE user_id = '$user_id'");    
     while ($cartd = mysqli_fetch_array($cart_q)) {
         $pro_id = $cartd['pro_id'];
         $pro_cart_qty = $cartd['pro_cart_qty'];
         $pro_price = $cartd['pro_price'];
-        
         $orderdetailq = mysqli_query($con, "insert into order_details(order_id,product_id,product_qty,product_price)values('{$order_id}','{$pro_id}','{$pro_cart_qty}','{$pro_price}')") or die(mysqli_error($con));
         
         $deletecart = mysqli_query($con, "DELETE FROM cart WHERE user_id = '$user_id' AND cart_id = '" . $cartd['cart_id'] . "'");
@@ -36,7 +30,6 @@ if ($_POST) {
     if ($deletecart) {
         echo "<script>alert('Thanks for shopping...');window.location='index.php'</script>";
     }
-
 }
 ?>
 <!DOCTYPE html>
